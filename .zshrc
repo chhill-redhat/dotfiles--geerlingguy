@@ -1,7 +1,15 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 #
 # .zshrc
 #
 # @author Jeff Geerling
+# @modifier Chris Hill
 #
 
 # Colors.
@@ -12,14 +20,15 @@ export CLICOLOR_FORCE=1
 # Don't require escaping globbing characters in zsh.
 unsetopt nomatch
 
-# Nicer prompt.
-export PS1=$'\n'"%F{green} %*%F %3~ %F{white}"$'\n'"$ "
-
 # Enable plugins.
 plugins=(git brew history kubectl history-substring-search)
 
 # Custom $PATH with extra locations.
 export PATH=$HOME/Library/Python/3.8/bin:/opt/homebrew/bin:/usr/local/bin:/usr/local/sbin:$HOME/bin:$HOME/go/bin:/usr/local/git/bin:$HOME/.composer/vendor/bin:$PATH
+
+# Includes custom-built OpenShift cli, per
+# https://source.redhat.com/groups/public/itpaas/it_paas_forum/building_openshift_cli_with_gssapi_support_for_mac_users.
+export PATH=$HOME/projects/openshift_origin/_output/local/bin/darwin/amd64:$PATH
 
 # Bash-style time output.
 export TIMEFMT=$'\nreal\t%*E\nuser\t%*U\nsys\t%*S'
@@ -41,9 +50,9 @@ else
 fi
 
 # Allow history search via up/down keys.
-source ${share_path}/zsh-history-substring-search/zsh-history-substring-search.zsh
-bindkey "^[[A" history-substring-search-up
-bindkey "^[[B" history-substring-search-down
+# source ${share_path}/zsh-history-substring-search/zsh-history-substring-search.zsh
+# bindkey "^[[A" history-substring-search-up
+# bindkey "^[[B" history-substring-search-down
 
 # Git aliases.
 alias gs='git status'
@@ -125,3 +134,29 @@ export COMPOSER_MEMORY_LIMIT=-1
 #}
 #shopt -s extdebug
 #trap prod_command_trap DEBUG
+
+bindkey -v
+bindkey '^R' history-incremental-search-backward
+
+setopt auto_cd
+cdpath=($HOME/projects $HOME/projects/rhpc/web/modules/custom $HOME/projects/rhpc/web/modules/contrib $HOME/projects/rhpc/web/themes/custom)
+
+# Add tab completion for SSH hostnames based on ~/.ssh/config, ignoring wildcards
+# TODO "complete" is missing command?
+#[ -e "$HOME/.ssh/config" ] && complete -o "default" -o "nospace" -W "$(grep "^Host" ~/.ssh/config | grep -v "[?*]" | cut -d " " -f2- | tr ' ' '\n')" scp sftp ssh;
+
+#NEWLINE=$'\n'
+##PROMPT="%t %? %~ > ${NEWLINE}$ "
+#PROMPT="%F{white}%t %F{yellow}%? %F{cyan}%~ %F{white} > ${NEWLINE}$ "
+
+export NVM_DIR="$HOME/.nvm"
+  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+export PATH="/usr/local/opt/php@7.4/bin:$PATH"
+export PATH="/usr/local/opt/php@7.4/sbin:$PATH"
+
+source /opt/homebrew/opt/powerlevel10k/powerlevel10k.zsh-theme
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

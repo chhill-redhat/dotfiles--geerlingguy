@@ -1,6 +1,6 @@
 [user]
-  name = Jeff Geerling
-  email = geerlingguy@mac.com
+  name = Chris Hill
+  email = chhill@redhat.com
 [core]
   editor = vi
   excludesfile = ~/.gitignore
@@ -12,6 +12,7 @@
   status = auto
 [init]
   defaultBranch = master
+	templateDir = /Users/chhill/.git-template
 [web]
   browser = google-chrome
 [credential]
@@ -32,3 +33,5 @@
   l = log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit
 [pull]
 	rebase = true
+[rh-pre-commit]
+	checkSecrets = true
